@@ -16,11 +16,11 @@ function classNames(...classes) {
 }
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    // api.get('/users');
-  }, [])
+  useEffect(()=> {
+    api.get('/users').then(response => console.log(response.data));
+  }, []);
 
   return (
     <div>
@@ -80,7 +80,7 @@ export default function Dashboard() {
                               <span className="sr-only">Open user menu</span>
                               <img
                                 className="h-8 w-8 rounded-full"
-                                src={user?.avatar_url}
+                                src=""
                                 alt=""
                               />
                             </Menu.Button>
@@ -169,7 +169,7 @@ export default function Dashboard() {
                   <div className="flex-shrink-0">
                     <img
                       className="h-10 w-10 rounded-full"
-                      src={user?.avatar_url}
+                      src=""
                       alt=""
                     />
                   </div>
@@ -207,7 +207,7 @@ export default function Dashboard() {
 
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Bem vindo, {user?.username}</h1>
         </div>
       </header>
       <main>
@@ -224,7 +224,6 @@ export default function Dashboard() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const apiClient = getAPIClient(ctx);
   const { ['nextauth.token']: token } = parseCookies(ctx)
 
   if (!token) {
@@ -235,8 +234,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }
     }
   }
-
-  await apiClient.get('/users')
 
   return {
     props: {}

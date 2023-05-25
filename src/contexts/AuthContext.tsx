@@ -1,18 +1,14 @@
 import { createContext, useEffect, useState } from "react";
 import { setCookie, parseCookies } from 'nookies'
 import Router from 'next/router'
-
-import { recoverUserInformation, signInRequest } from "../services/auth";
 import { api } from "../services/api";
 
 type User = {
-  name: string;
-  email: string;
-  avatar_url: string;
+  username: string;
 }
 
 type SignInData = {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -30,31 +26,44 @@ export function AuthProvider({ children }) {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    const { 'nextauth.token': token } = parseCookies()
+    const { 'nextauth.token': token } = parseCookies();
 
     if (token) {
-      recoverUserInformation().then(response => {
-        setUser(response.user)
+      let url = `user/${token}`
+      api.get(url)
+      .then(response => {
+        const { username } = response.data;
+        setUser({ username }); 
       })
     }
   }, [])
 
-  async function signIn({ email, password }: SignInData) {
-    const { token, user } = await signInRequest({
-      email,
-      password,
-    })
+  async function signIn({username, password}: SignInData) {
 
-    setCookie(undefined, 'nextauth.token', token, {
-      maxAge: 60 * 60 * 1, // 1 hour
-    })
+    const requestData = {
+      username: username,
+      password: password
+    }
+    
+    let token, user;
+  
+    try {
+      const response = await api.post('http://localhost:3333/login', requestData);
+      ({ token, user } = response.data);
 
-    api.defaults.headers['Authorization'] = `Bearer ${token}`;
-
-    setUser(user)
-
-    Router.push('/dashboard');
-  }
+      setCookie(undefined, 'nextauth.token', token, {
+        maxAge: 60 * 60 * 1, // 1 hour
+      })
+      
+      api.defaults.headers['Authorization'] = `Bearer ${token}`;
+    
+      setUser(user)
+    
+      Router.push('/dashboard');
+    } catch (error) {
+      console.error(error.message);
+    }
+  }  
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
