@@ -4,6 +4,7 @@ import Router from 'next/router'
 import { api } from "../services/api";
 
 type User = {
+  id: string;
   username: string;
 }
 
@@ -33,8 +34,8 @@ export function AuthProvider({ children }) {
       let url = `user/${token}`
       api.get(url)
       .then(response => {
-        const { username } = response.data;
-        setUser({ username }); 
+        const { id, username } = response.data;
+        setUser({ id, username }); 
       })
     }
   }, [])
@@ -65,6 +66,7 @@ export function AuthProvider({ children }) {
       console.error(error.message);
     }
   }  
+
 
   async function signOut(){
     destroyCookie(undefined, 'nextauth.token');

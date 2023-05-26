@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
 import { AuthContext } from '../contexts/AuthContext';
 import { api } from '../services/api';
@@ -6,11 +6,23 @@ import { GetServerSideProps } from 'next';
 
 import Header from '../components/Header';
 
+type ACLResponse = {
+  name: string;
+  description: string;
+}
+
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
+  const [rolesArray, setRolesArray] = useState<ACLResponse[]>([]);
+  const [permissionsArray, setPermissionsArray] = useState<ACLResponse[]>([]);
 
-  useEffect(()=> {
-    api.get('/users').then(response => console.log(response.data));
+  useEffect(() => {
+    api.get(`/user/acl/${user.id}`).then((response) => {
+      const { roles, permissions } = response.data;
+
+      setRolesArray(roles);
+      setPermissionsArray(permissions);
+    });
   }, []);
 
   return (
@@ -26,7 +38,99 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           {/* Replace with your content */}
           <div className="px-4 py-6 sm:px-0">
-            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
+            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96"> 
+        
+            <h1 className="text-2xl font-bold text-gray-900 mb-4 mt-4 ml-11">Suas Roles</h1>
+            {/*Table Role*/}
+            <div className="flex flex-col">
+              <div className="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
+                <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+                  <div className="overflow-hidden">
+                    <table className="min-w-full">
+                      <thead className="bg-white border-b">
+                        <tr>
+                          <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                            Role
+                          </th>
+                          <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-right">
+                            Description
+                          </th>
+                        </tr>
+                      </thead>
+                      {rolesArray.length > 0 ? (
+                        <tbody>
+                          {rolesArray.map((role) => (
+                            <tr className="bg-gray-100 border-b">
+                              <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                {role.name}
+                              </td>
+                              <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap text-right">
+                                {role.description}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      ) : (
+                        <tbody>
+                          <tr>
+                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4">
+                              Não há cargos.
+                            </td>
+                          </tr>
+                        </tbody>
+                      )}
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h1 className="text-2xl font-bold text-gray-900 mb-4 mt-4 ml-11">Suas Permissions</h1>
+            {/*Table Permission*/}
+            <div className="flex flex-col">
+              <div className="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
+                <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+                  <div className="overflow-hidden">
+                    <table className="min-w-full">
+                      <thead className="bg-white border-b">
+                        <tr>
+                          <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                            Permission
+                          </th>
+                          <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-right">
+                            Description
+                          </th>
+                        </tr>
+                      </thead>
+                      {permissionsArray.length > 0 ? (
+                        <tbody>
+                          {permissionsArray.map((permission) => (
+                            <tr className="bg-gray-100 border-b">
+                              <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                {permission.name}
+                              </td>
+                              <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap text-right">
+                                {permission.description}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      ) : (
+                        <tbody>
+                          <tr>
+                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4">
+                              Não há permissões.
+                            </td>
+                          </tr>
+                        </tbody>
+                      )}
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            </div>
           </div>
           {/* /End replace */}
         </div>
