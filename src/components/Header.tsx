@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect } from 'react';
 import Head from 'next/head';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
-
+import { AuthContext } from '../contexts/AuthContext';
 
 const navigation = ['Dashboard', 'Team', 'Projects', 'Calendar', 'Reports'];
 const profile = ['Your Profile', 'Settings'];
@@ -12,13 +12,19 @@ function classNames(...classes) {
 }
 
 export default function Header () {
+  const { signOut } = useContext(AuthContext);
+
+  function handleSignOut () {
+    signOut();
+  }
+  
   return (
     <>
       <Head>
         <title>Dashboard</title>
       </Head>
 
-      <Disclosure as="nav" className="bg-gray-800">
+      <Disclosure as="nav" className="bg-gray-800" >
         {({ open }) => (
           <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -108,6 +114,7 @@ export default function Header () {
                                 <a
                                   href="#"
                                   className='block px-4 py-2 text-sm text-gray-700'
+                                  onClick={handleSignOut}
                                 >
                                   Sign out
                                 </a>
@@ -172,7 +179,7 @@ export default function Header () {
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-                <div className="mt-3 px-2 space-y-1">
+                <div className="mt-3 px-2 space-y-1" >
                   {profile.map((item) => (
                     <a
                       key={item}
@@ -185,6 +192,7 @@ export default function Header () {
                   <a
                     href="#"
                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+                    onClick={handleSignOut}
                   >
                     Sign out
                   </a>

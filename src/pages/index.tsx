@@ -3,6 +3,8 @@ import { LockClosedIcon } from '@heroicons/react/solid'
 import { useForm } from 'react-hook-form'
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 
 export default function Home() {
   const { register, handleSubmit } = useForm();
@@ -78,3 +80,21 @@ export default function Home() {
     </div>
   )
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { ['nextauth.token']: token } = parseCookies(ctx)
+
+  if (token) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {}
+  }
+}
+
