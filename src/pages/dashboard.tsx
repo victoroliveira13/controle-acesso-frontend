@@ -1,33 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { parseCookies } from 'nookies';
 import { AuthContext } from '../contexts/AuthContext';
-import { api } from '../services/api';
 import { GetServerSideProps } from 'next';
 
 import Header from '../components/Header';
 
-type ACLResponse = {
-  name: string;
-  description: string;
-}
-
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
-  const [rolesArray, setRolesArray] = useState<ACLResponse[]>([]);
-  const [permissionsArray, setPermissionsArray] = useState<ACLResponse[]>([]);
-
-  useEffect(() => {
-    if (user) {
-      api.get(`/user/acl/${user.id}`).then((response) => {
-        const { roles, permissions } = response.data;
-  
-        setRolesArray(roles);
-        setPermissionsArray(permissions);
-      }).catch(error => {
-        console.error(error.message);
-      });
-    }
-  }, [user]);  
 
   return (
     <div>
@@ -42,7 +21,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           {/* Replace with your content */}
           <div className="px-4 py-6 sm:px-0">
-            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96"> 
+            <div className="border-4 border-dashed border-gray-200 rounded-lg auto">
         
             <h1 className="text-2xl font-bold text-gray-900 mb-4 mt-4 ml-11">Suas Roles</h1>
             {/*Table Role*/}
@@ -61,9 +40,9 @@ export default function Dashboard() {
                           </th>
                         </tr>
                       </thead>
-                      {rolesArray.length > 0 ? (
+                      {user?.roles.length > 0 ? (
                         <tbody>
-                          {rolesArray.map((role) => (
+                          {user?.roles.map((role) => (
                             <tr className="bg-gray-100 border-b">
                               <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                                 {role.name}
@@ -74,11 +53,11 @@ export default function Dashboard() {
                             </tr>
                           ))}
                         </tbody>
-                      ) : (
+                        ) : (
                         <tbody>
                           <tr>
-                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4">
-                              Não há cargos.
+                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4 text-center">
+                              There are no roles.
                             </td>
                           </tr>
                         </tbody>
@@ -106,9 +85,9 @@ export default function Dashboard() {
                           </th>
                         </tr>
                       </thead>
-                      {permissionsArray.length > 0 ? (
+                      {user?.permissions.length > 0 ? (
                         <tbody>
-                          {permissionsArray.map((permission) => (
+                          {user?.permissions.map((permission) => (
                             <tr className="bg-gray-100 border-b">
                               <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                                 {permission.name}
@@ -122,8 +101,8 @@ export default function Dashboard() {
                       ) : (
                         <tbody>
                           <tr>
-                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4">
-                              Não há permissões.
+                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4 text-center">
+                              There are no permissions.
                             </td>
                           </tr>
                         </tbody>

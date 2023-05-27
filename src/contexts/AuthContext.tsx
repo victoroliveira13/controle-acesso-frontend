@@ -3,9 +3,16 @@ import { setCookie, parseCookies, destroyCookie } from 'nookies'
 import Router from 'next/router'
 import { api } from "../services/api";
 
+type ACLUser = {
+  name: string;
+  description: string;
+}
+
 type User = {
   id: string;
   username: string;
+  roles: ACLUser[];
+  permissions: ACLUser[];
 }
 
 type SignInData = {
@@ -31,16 +38,14 @@ export function AuthProvider({ children }) {
     const { 'nextauth.token': token } = parseCookies();
   
     if (!token) {
-      Router.push('/login');
+      Router.push('/');
       return;
     }
   
     let url = `user/${token}`;
     api.get(url)
       .then(response => {
-        const { id, username } = response.data;
-        const userData = { id, username };
-        setUser(userData);
+        setUser(response.data);
       })
       .catch(error => {
         console.error(error.message);
