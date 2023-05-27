@@ -1,28 +1,29 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import { UserAddIcon } from '@heroicons/react/solid';
+import { useForm } from 'react-hook-form';
+import { api } from '../services/api';
 import Router from 'next/router';
-import { LockClosedIcon, UserAddIcon } from '@heroicons/react/solid';
-import { useForm } from 'react-hook-form'
-import { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
-import { GetServerSideProps } from 'next';
-import { parseCookies } from 'nookies';
 
-export default function Home() {
+type accountData = {
+  username: string;
+  password: string;
+}
+
+export default function Register() {
   const { register, handleSubmit } = useForm();
-  const { signIn } = useContext(AuthContext)
-
   async function handleSignIn(data) {
-    await signIn(data)
+    try {
+      api.post('/user', data);
+      Router.push('/');
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
-  function handleRegisterButtonClick() {
-    Router.push('/register');
-  }
-
-  return (
+  return(
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Head>
-        <title>Home</title>
+        <title>Register</title>
       </Head>
 
       <div className="max-w-sm w-full space-y-8">
@@ -32,7 +33,7 @@ export default function Home() {
             src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
             alt="Workflow"
           />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Register account</h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(handleSignIn)}>
           <input type="hidden" name="remember" defaultValue="true" />
@@ -75,42 +76,14 @@ export default function Home() {
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
-              </span>
-              Sign in
-            </button>
-
-            <button
-              type="button"
-              className="group relative w-full mt-4 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              onClick={handleRegisterButtonClick}
-            >
-              <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-              <UserAddIcon className="h-5 w-5 text-gray-300 group-hover:text-gray-300" aria-hidden="true" />  
+                <UserAddIcon className="h-5 w-5 text-gray-300 group-hover:text-gray-300" aria-hidden="true" />  
               </span>
               Register
             </button>
+            
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { ['nextauth.token']: token } = parseCookies(ctx)
-
-  if (token) {
-    return {
-      redirect: {
-        destination: '/dashboard',
-        permanent: false,
-      }
-    }
-  }
-
-  return {
-    props: {}
-  }
-}
-
