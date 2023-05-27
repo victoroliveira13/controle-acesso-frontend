@@ -29,16 +29,25 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const { 'nextauth.token': token } = parseCookies();
-
-    if (token) {
-      let url = `user/${token}`
-      api.get(url)
+  
+    if (!token) {
+      Router.push('/login');
+      return;
+    }
+  
+    let url = `user/${token}`;
+    api.get(url)
       .then(response => {
         const { id, username } = response.data;
-        setUser({ id, username }); 
+        const userData = { id, username };
+        setUser(userData);
       })
-    }
-  }, [])
+      .catch(error => {
+        console.error(error.message);
+        setUser(null);
+      });
+  }, []);
+  
 
   async function signIn({username, password}: SignInData) {
 

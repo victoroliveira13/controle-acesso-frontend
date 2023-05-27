@@ -17,13 +17,17 @@ export default function Dashboard() {
   const [permissionsArray, setPermissionsArray] = useState<ACLResponse[]>([]);
 
   useEffect(() => {
-    api.get(`/user/acl/${user.id}`).then((response) => {
-      const { roles, permissions } = response.data;
-
-      setRolesArray(roles);
-      setPermissionsArray(permissions);
-    });
-  }, []);
+    if (user) {
+      api.get(`/user/acl/${user.id}`).then((response) => {
+        const { roles, permissions } = response.data;
+  
+        setRolesArray(roles);
+        setPermissionsArray(permissions);
+      }).catch(error => {
+        console.error(error.message);
+      });
+    }
+  }, [user]);  
 
   return (
     <div>
