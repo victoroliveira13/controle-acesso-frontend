@@ -6,6 +6,7 @@ import { api } from "../services/api";
 type ACLUser = {
   name: string;
   description: string;
+  origin: string;
 }
 
 type User = {

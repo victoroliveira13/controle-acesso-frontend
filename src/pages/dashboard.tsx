@@ -80,6 +80,9 @@ export default function Dashboard() {
                           <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                             Permission
                           </th>
+                          <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-center">
+                            Origin
+                          </th>
                           <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-right">
                             Description
                           </th>
@@ -91,6 +94,9 @@ export default function Dashboard() {
                             <tr className="bg-gray-100 border-b">
                               <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                                 {permission.name}
+                              </td>
+                              <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap text-center">
+                                {permission.origin}
                               </td>
                               <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap text-right">
                                 {permission.description}
