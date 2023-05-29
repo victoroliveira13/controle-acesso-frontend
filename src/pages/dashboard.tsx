@@ -56,7 +56,7 @@ export default function Dashboard() {
                         ) : (
                         <tbody>
                           <tr>
-                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4 text-center">
+                            <td colSpan={3} className="text-sm text-gray-900 px-6 py-4 text-center">
                               There are no roles.
                             </td>
                           </tr>
@@ -107,7 +107,7 @@ export default function Dashboard() {
                       ) : (
                         <tbody>
                           <tr>
-                            <td colSpan={2} className="text-sm text-gray-900 px-6 py-4 text-center">
+                            <td colSpan={3} className="text-sm text-gray-900 px-6 py-4 text-center">
                               There are no permissions.
                             </td>
                           </tr>
