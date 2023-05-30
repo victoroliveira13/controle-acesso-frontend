@@ -19,8 +19,11 @@ function classNames(...classes) {
 }
 
 export default function Header () {
+  const { user } = useContext(AuthContext);
+
   const router = useRouter();
   const currentRoute = router.pathname;
+
   const { signOut } = useContext(AuthContext);
 
   function handleSignOut () {
@@ -63,6 +66,17 @@ export default function Header () {
                         </a>
                       );
                     })}
+                    {user && user.permissions && user.permissions.some(permission => permission.name === 'list_permission') && (
+                      <a
+                        href="/permissions"
+                        className={`
+                          ${currentRoute === '/permissions'
+                          ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
+                          : 'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'}`}
+                      >
+                        Permissions
+                      </a>
+                    )}
                     </div>
                   </div>
                 </div>
