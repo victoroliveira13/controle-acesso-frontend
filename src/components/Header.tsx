@@ -77,6 +77,17 @@ export default function Header () {
                         Permissions
                       </a>
                     )}
+                    {user && user.permissions && user.permissions.some(permission => permission.name === 'list_role') && (
+                      <a
+                        href="/roles"
+                        className={`
+                          ${currentRoute === '/roles'
+                          ? 'bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium'
+                          : 'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium'}`}
+                      >
+                        Roles
+                      </a>
+                    )}
                     </div>
                   </div>
                 </div>
@@ -177,6 +188,28 @@ export default function Header () {
                   </a>
                 );
               })}
+              {user && user.permissions && user.permissions.some(permission => permission.name === 'list_permission') && (
+                <a
+                  href="/permissions"
+                  className={`
+                    ${currentRoute === '/permissions'
+                    ? "bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"}`}
+                >
+                  Permissions
+                </a>
+              )}
+              {user && user.permissions && user.permissions.some(permission => permission.name === 'list_role') && (
+                <a
+                  href="/roles"
+                  className={`
+                  ${currentRoute === '/roles'
+                  ? "bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"}`}
+                >
+                  Roles
+                </a>
+              )}
               </div>
               <div className="pt-4 pb-3 border-t border-gray-700">
                 <div className="flex items-center px-5">
