@@ -1,11 +1,12 @@
 import { Fragment, useContext, useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import { AuthContext } from '../contexts/AuthContext';
 
 const navigation = [
-  { label: 'Dashboard', route: '/' },
+  { label: 'Dashboard', route: '/dashboard' },
   { label: 'Team', route: '#' },
   { label: 'Projects', route: '#' },
   { label: 'Calendar', route: '#' },
@@ -18,6 +19,8 @@ function classNames(...classes) {
 }
 
 export default function Header () {
+  const router = useRouter();
+  const currentRoute = router.pathname;
   const { signOut } = useContext(AuthContext);
 
   function handleSignOut () {
@@ -45,24 +48,21 @@ export default function Header () {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
-                    {navigation.map((item, itemIdx) =>
-                      itemIdx === 0 ? (
-                        <Fragment key={item.label}>
-                          {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                          <a href={item.route} className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
-                            {item.label}
-                          </a>
-                        </Fragment>
-                      ) : (
+                    {navigation.map((item, itemIdx) => {
+                      const isCurrentRoute = item.route === currentRoute;
+                      const linkClassName = isCurrentRoute
+                        ? "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" 
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"; 
+                      return (
                         <a
                           key={item.label}
                           href={item.route}
-                          className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                          className={linkClassName}
                         >
                           {item.label}
                         </a>
-                      )
-                    )}
+                      );
+                    })}
                     </div>
                   </div>
                 </div>
@@ -148,24 +148,21 @@ export default function Header () {
 
             <Disclosure.Panel className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navigation.map((item, itemIdx) =>
-                itemIdx === 0 ? (
-                  <Fragment key={item.label}>
-                    {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                    <a href={item.route} className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium">
-                      {item.label}
-                    </a>
-                  </Fragment>
-                ) : (
+              {navigation.map((item, itemIdx) => {
+                const isCurrentRoute = item.route === currentRoute;
+                const linkClassName = isCurrentRoute
+                  ? "bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"; 
+                return (
                   <a
                     key={item.label}
                     href={item.route}
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                    className={linkClassName}
                   >
                     {item.label}
                   </a>
-                )
-              )}
+                );
+              })}
               </div>
               <div className="pt-4 pb-3 border-t border-gray-700">
                 <div className="flex items-center px-5">
