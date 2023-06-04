@@ -9,7 +9,8 @@ interface ModalCrudAclProps {
   isPermission: boolean;
   isDelete: boolean;
   row: any;
-  setPermissions: any;
+  setPermissions?: any;
+  setRoles?: any;
 }
 
 export default function ModalCrudAcl({
@@ -19,7 +20,8 @@ export default function ModalCrudAcl({
   isPermission,
   isDelete,
   row,
-  setPermissions
+  setPermissions,
+  setRoles
 }: ModalCrudAclProps) {
   const { register, handleSubmit, setValue } = useForm();
 
@@ -49,8 +51,15 @@ export default function ModalCrudAcl({
       else if (isPermission && !isAddMode) {
         const response = await api.put(`/permissions/${row.id}`, dataRequest);
       }
+      if (!isPermission && isAddMode) {
+        const response = await api.post('/roles', dataRequest);
+      }
+      else if (!isPermission && !isAddMode) {
+        const response = await api.put(`/roles/${row.id}`, dataRequest);
+      }      
 
-      api.get('/permissions').then(response => setPermissions(response.data));
+      if(isPermission) api.get('/permissions').then(response => setPermissions(response.data));
+      else api.get('/roles').then(response => setRoles(response.data));
 
     } catch (error) {
       console.error(error);
@@ -61,8 +70,13 @@ export default function ModalCrudAcl({
   
   const handleDelete = async () => {
     try {
-      await api.delete(`/permissions/${row.id}`);
-      api.get('/permissions').then(response => setPermissions(response.data));
+      if (isPermission) {
+        await api.delete(`/permissions/${row.id}`);
+        api.get('/permissions').then(response => setPermissions(response.data));
+      } else {
+        await api.delete(`/roles/${row.id}`);
+        api.get('/roles').then(response => setRoles(response.data));      
+      }
     } catch (error) {
       console.error(error);
     }

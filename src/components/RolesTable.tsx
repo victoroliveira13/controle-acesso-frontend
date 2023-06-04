@@ -20,10 +20,10 @@ export default function RolesTable({ roles, openModal }) {
                 <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                   <div className="flex justify-end">
                     <button className="bg-yellow-300 hover:bg-yellow-400 text-white font-bold py-2 px-4 mr-1 rounded-md flex items-center justify-center">
-                      <PencilIcon className="h-5 w-5" onClick={() => openModal(false, false, role)} />
+                    <PencilIcon className="h-5 w-5" onClick={() => openModal({ isAddMode: false, isPermission: false, row: role })} />
                     </button>
                     <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center">
-                      <TrashIcon className="h-5 w-5" />
+                      <TrashIcon className="h-5 w-5" onClick={() => openModal({ isAddMode: false, isPermission: false, row: role, isDelete: true })} />
                     </button>
                   </div>
                 </td>

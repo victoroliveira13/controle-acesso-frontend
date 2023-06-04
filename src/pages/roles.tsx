@@ -8,21 +8,18 @@ import Header from "../components/Header";
 import ModalCrudAcl from "../components/ModalCrudAcl";
 import RolesTable from "../components/RolesTable";
 
-type Role = {
-  name: string;
-  description: string;
-}
-
 type ModalData = {
   isAddMode: boolean;
   isPermission: boolean;
-}
+  row?: any;
+  isDelete?: boolean;
+};
 
 export default function Roles() {
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [roles, setRoles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState<ModalData>({ isAddMode: true, isPermission: true });
-  const [selectedRow, setSelectedRow] = useState<Role | null>(null);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   useEffect(() => {
     api.get('/roles')
@@ -30,8 +27,8 @@ export default function Roles() {
       .catch(error => console.error(error));
   }, []);
 
-  const openModal = (isAddMode: boolean, isPermission: boolean, row: Role | null = null) => {
-    setModalData({ isAddMode, isPermission });
+  const openModal = ({ isAddMode, isPermission, row = null, isDelete = false }: ModalData) => {
+    setModalData({ isAddMode, isPermission, isDelete }); 
     setSelectedRow(row);
     setShowModal(true);
   };
@@ -54,12 +51,15 @@ export default function Roles() {
           <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
               <div className="border-4 border-dashed border-gray-200 rounded-lg auto">
+                {/* Modal */}
                 <ModalCrudAcl
                   isOpen={showModal}
                   onClose={closeModal}
                   isAddMode={modalData.isAddMode}
                   isPermission={modalData.isPermission}
+                  isDelete={modalData.isDelete}
                   row={selectedRow}
+                  setRoles={setRoles}
                 />
 
                 <div className="flex justify-between items-center py-2 inline-block min-w-full sm:px-6 lg:px-8">
@@ -67,7 +67,7 @@ export default function Roles() {
 
                   <button
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md flex items-center"
-                    onClick={() => openModal(true, false)}
+                    onClick={() => openModal({ isAddMode: true, isPermission: false })}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M11 9V4a1 1 0 0 0-2 0v5H4a1 1 0 1 0 0 2h5v5a1 1 0 1 0 2 0v-5h5a1 1 0 1 0 0-2h-5z" clipRule="evenodd" />
@@ -79,7 +79,9 @@ export default function Roles() {
                 <div className="flex flex-col">
                   <div className="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
                     <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
-                      <RolesTable roles={roles} openModal={openModal} />
+
+                      <RolesTable openModal={openModal} roles={roles} />
+
                     </div>
                   </div>
                 </div>
