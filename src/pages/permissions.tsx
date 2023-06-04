@@ -8,22 +8,30 @@ import Header from "../components/Header";
 import ModalCrudAcl from "../components/ModalCrudAcl";
 import PermissionsTable from "../components/PermissionsTable";
 
-type Permission = {
-  id: number;
-  name: string;
-  description: string;
-}
-
 type ModalData = {
   isAddMode: boolean;
   isPermission: boolean;
-}
+  row?: any;
+  isDelete?: boolean;
+};
 
 export default function Permissions() {
-  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [permissions, setPermissions] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [modalData, setModalData] = useState<ModalData>({ isAddMode: true, isPermission: true });
-  const [selectedRow, setSelectedRow] = useState<Permission | null>(null);
+  const [modalData, setModalData] = useState<ModalData>({ isAddMode: true, isPermission: true});
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const openModal = ({ isAddMode, isPermission, row = null, isDelete = false }: ModalData) => {
+    setModalData({ isAddMode, isPermission, isDelete }); 
+    setSelectedRow(row);
+    setShowModal(true);
+  };
+  
+
+  const closeModal = () => {
+    setSelectedRow(null);
+    setShowModal(false);
+  };
 
   useEffect(() => {
     api.get('/permissions')
@@ -34,17 +42,6 @@ export default function Permissions() {
         console.error(error);
       });
   }, []);
-
-  const openModal = (isAddMode: boolean, isPermission: boolean, row: Permission | null = null) => {
-    setModalData({ isAddMode, isPermission });
-    setSelectedRow(row);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setSelectedRow(null);
-    setShowModal(false);
-  };
 
   return (
     <>
@@ -59,14 +56,17 @@ export default function Permissions() {
           <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div className="px-4 py-6 sm:px-0">
               <div className="border-4 border-dashed border-gray-200 rounded-lg auto">
+                {/* Modal */}
                 <ModalCrudAcl
                   isOpen={showModal}
                   onClose={closeModal}
                   isAddMode={modalData.isAddMode}
                   isPermission={modalData.isPermission}
+                  isDelete={modalData.isDelete}
                   row={selectedRow}
+                  setPermissions={setPermissions}
                 />
-
+                
                 <div className="flex justify-between items-center py-2 inline-block min-w-full sm:px-6 lg:px-8">
                   <h1 className="text-2xl font-bold text-gray-900 mb-4 mt-4 ml-4">
                     Permissions
@@ -74,22 +74,17 @@ export default function Permissions() {
 
                   <button
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md flex items-center"
-                    onClick={() => openModal(true, true)}
+                    onClick={() => openModal({ isAddMode: true, isPermission: true })}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M11 9V4a1 1 0 0 0-2 0v5H4a1 1 0 1 0 0 2h5v5a1 1 0 1 0 2 0v-5h5a1 1 0 1 0 0-2h-5z" clipRule="evenodd" />
+                      <path fillRule="evenodd" clipRule="evenodd" d="M11 4h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3V2a1 1 0 0 1 2 0v2zM9 6V4H6v13h9V4h-3v2a1 1 0 0 1-2 0zm7-2H4v15a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V4zm-7 7h2v2h-2v-2zm0-4h2v3h-2V7z" />
                     </svg>
-                    Adicionar
+                    Add Permission
                   </button>
                 </div>
 
-                <div className="flex flex-col">
-                  <div className="overflow-x-auto sm:mx-0.5 lg:mx-0.5">
-                    <div className="py-2 inline-block min-w-full sm:px-6 lg:px-8">
-                      <PermissionsTable permissions={permissions} openModal={openModal} />
-                    </div>
-                  </div>
-                </div>
+                <PermissionsTable openModal={openModal} permissions={permissions} />
+    
               </div>
             </div>
           </div>
